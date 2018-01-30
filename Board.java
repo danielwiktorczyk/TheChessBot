@@ -1,93 +1,129 @@
 package theChessBot;
 
-
-
 /**
  * 
  * @author Daniel Wiktorczyk
  * 
  * The Board class is the main board of TheChessBot application
  */
+
 public class Board {
 
-	private Piece[] square;
-	private Piece[][] square2;
+	private Piece[] squares;
+	//private Piece[][] square2;
 	
 	public Board()
 	{
-		square = new Piece[64];
-		square[0] = new Rook(1);
-		square[1] = new Bishop(2);
+		
+		squares = new Piece[64];
+		
+		squares[0] = new Rook(true);
+		squares[1] = new Knight(true);
+		squares[2] = new Bishop(true);
+		squares[3] = new Queen(true);
+		squares[4] = new King(true);
+		squares[5] = new Bishop(true);
+		squares[6] = new Knight(true);
+		squares[7] = new Rook(true);
+				
+		squares[8] = new Pawn(true);
+		squares[9] = new Pawn(true);
+		squares[10] = new Pawn(true);
+		squares[11] = new Pawn(true);
+		squares[12] = new Pawn(true);
+		squares[13] = new Pawn(true);
+		squares[14] = new Pawn(true);
+		squares[15] = new Pawn(true);
+		
+		for ( int i = 16; i < 56; i++) {
+			squares[i] = null;
+		}
+		
+		squares[48] = new Pawn(false);
+		squares[49] = new Pawn(false);
+		squares[50] = new Pawn(false);
+		squares[51] = new Pawn(false);
+		squares[52] = new Pawn(false);
+		squares[53] = new Pawn(false);
+		squares[54] = new Pawn(false);
+		squares[55] = new Pawn(false);
+		
+		squares[56] = new Rook(false);
+		squares[57] = new Knight(false);
+		squares[58] = new Bishop(false);
+		squares[59] = new Queen(false);
+		squares[60] = new King(false);
+		squares[61] = new Bishop(false);
+		squares[62] = new Knight(false);
+		squares[63] = new Rook(false);
+		
+		
+		
 		
 		//pieces2[0][0] = new Pawn(1);
 	}
 	
-	/**
-	 * Pawns
-	 */
-	private Pawn whitePawn1 = new Pawn(8);
-	private Pawn whitePawn2 = new Pawn(9);
-	private Pawn whitePawn3 = new Pawn(10);
-	private Pawn whitePawn4 = new Pawn(11);
-	private Pawn whitePawn5 = new Pawn(12);
-	private Pawn whitePawn6 = new Pawn(13);
-	private Pawn whitePawn7 = new Pawn(14);
-	private Pawn whitePawn8 = new Pawn(15);
 	
-	private Pawn blackPawn1 = new Pawn(48);
-	private Pawn blackPawn2 = new Pawn(49);
-	private Pawn blackPawn3 = new Pawn(50);
-	private Pawn blackPawn4 = new Pawn(51);
-	private Pawn blackPawn5 = new Pawn(52);
-	private Pawn blackPawn6 = new Pawn(53);
-	private Pawn blackPawn7 = new Pawn(54);
-	private Pawn blackPawn8 = new Pawn(55);
 	
-	/**
-	 * Rooks
-	 */
-	
-	private Rook whiteRook1 = new Rook(0);
-	private Rook whiteRook2 = new Rook(7);
-	
-	private Rook blackRook1 = new Rook(56);
-	private Rook blackRook2 = new Rook(63);
-	
-	/**
-	 * Knights
-	 */
-	
-	private Piece whiteKnight1 = new Knight(1);
-	private Piece whiteKnight2 = new Knight(6);
-	
-	private Piece blackKnight1 = new Knight(57);
-	private Knight blackKnight2 = new Knight(62);
-	
-	/**
-	 * Bishops
-	 */
-	
-	private Bishop whiteBishop1 = new Bishop(2);
-	private Bishop whiteBishop2 = new Bishop(5);
-	
-	private Bishop blackBishop1 = new Bishop(58);
-	private Bishop blackBishop2 = new Bishop(61);
-	
-	/**
-	 * The Royal Family
-	 */
-	
-	private Queen whiteQueen = new Queen(3);
-	private King whiteKing = new King(4);
-	
-	private Queen blackQueen = new Queen(59);
-	private King blackKing = new King(60);
-	
-	public void movePiece ( int initialPosition , int finalPosition ) {
-		
-		
+	public void move( int initialPosition , int finalPosition ) {
+
+		if ( squares[initialPosition] == null) {
+			System.out.println("Cannot move a piece that's not there!");
+		} else if ( squares[initialPosition].getType().equals("Pawn") ) {
+			
+			/**
+			 * Have the Pawn movement logic in here
+			 */
+			
+		} else if ( squares[initialPosition].getType().equals("Rook") ) {
+			
+			/**
+			 * Have the Rook movement logic in here
+			 */
+			
+		} else if ( squares[initialPosition].getType().equals("Knight") ) {
+			
+			/**
+			 * Have the Knight movement logic in here
+			 */
+			
+		} else if ( squares[initialPosition].getType().equals("Bishop") ) {
+			
+			/**
+			 * Have the Bishop movement logic in here
+			 */
+			
+		} else if ( squares[initialPosition].getType().equals("Queen") ) {
+			
+			/**
+			 * Have the Queen movement logic in here
+			 */
+			
+		} else if ( squares[initialPosition].getType().equals("King") ) {
+			
+			/**
+			 * Have the Pawn movement logic in here
+			 */
+			
+		} else  {
+			System.out.println("Weird error");
+		}
 		
 	}
+	
+	public String pieceAt( int location ) {
+		if ( location < 0 || location > 63 ) {
+			return "Error";
+		}
+		else if (squares[location] == null) {
+			return "no piece";
+		} else {
+			return squares[location].toString();
+
+		}
+			
+	}
+	
 	
 	
 	
