@@ -2,7 +2,7 @@ package theChessBot;
 
 public class King extends Piece {
 
-  public Knight ( boolean isWhite) {
+  public King ( boolean isWhite) {
 		super( isWhite );
 		//System.out.println("Creating a " +(isWhite?"white":"black")+ " knight");
 	}
