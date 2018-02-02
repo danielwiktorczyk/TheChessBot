@@ -4,7 +4,7 @@ public class Knight extends Piece{
 
 	public Knight ( boolean isWhite) {
 		super( isWhite );
-		System.out.println("Creating a " +(isWhite?"white":"black")+ " knight");
+		//System.out.println("Creating a " +(isWhite?"white":"black")+ " knight");
 	}
 	
 	public String toString () {
@@ -14,9 +14,4 @@ public class Knight extends Piece{
 	public String getType () {
 		return "Knight";
 	}
-//	public Knight ( int position ) {
-//		this.position = position;
-//	}
-	
-	
 }
