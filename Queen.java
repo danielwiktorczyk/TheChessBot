@@ -4,7 +4,7 @@ public class Queen extends Piece {
 
 	public Queen ( boolean isWhite) {
 		super(isWhite);
-		System.out.println("Creating a " +(isWhite?"white":"black")+ " queen");
+		//System.out.println("Creating a " +(isWhite?"white":"black")+ " queen");
 
 	}
 	
@@ -15,7 +15,4 @@ public class Queen extends Piece {
 	public String getType () {
 		return "Queen";
 	}
-//	public Queen ( int position ) {
-//		this.position = position;
-//	}
 }
