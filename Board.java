@@ -1,93 +1,415 @@
 package theChessBot;
 
-
-
 /**
  * 
  * @author Daniel Wiktorczyk
  * 
  * The Board class is the main board of TheChessBot application
  */
+
 public class Board {
 
-	private Piece[] square;
-	private Piece[][] square2;
+	//private Piece[] squares;
+	private Piece[][] squares = new Piece[8][8];
+	private boolean isWhitesTurn;
 	
 	public Board()
 	{
-		square = new Piece[64];
-		square[0] = new Rook(1);
-		square[1] = new Bishop(2);
 		
-		//pieces2[0][0] = new Pawn(1);
-	}
-	
-	/**
-	 * Pawns
-	 */
-	private Pawn whitePawn1 = new Pawn(8);
-	private Pawn whitePawn2 = new Pawn(9);
-	private Pawn whitePawn3 = new Pawn(10);
-	private Pawn whitePawn4 = new Pawn(11);
-	private Pawn whitePawn5 = new Pawn(12);
-	private Pawn whitePawn6 = new Pawn(13);
-	private Pawn whitePawn7 = new Pawn(14);
-	private Pawn whitePawn8 = new Pawn(15);
-	
-	private Pawn blackPawn1 = new Pawn(48);
-	private Pawn blackPawn2 = new Pawn(49);
-	private Pawn blackPawn3 = new Pawn(50);
-	private Pawn blackPawn4 = new Pawn(51);
-	private Pawn blackPawn5 = new Pawn(52);
-	private Pawn blackPawn6 = new Pawn(53);
-	private Pawn blackPawn7 = new Pawn(54);
-	private Pawn blackPawn8 = new Pawn(55);
-	
-	/**
-	 * Rooks
-	 */
-	
-	private Rook whiteRook1 = new Rook(0);
-	private Rook whiteRook2 = new Rook(7);
-	
-	private Rook blackRook1 = new Rook(56);
-	private Rook blackRook2 = new Rook(63);
-	
-	/**
-	 * Knights
-	 */
-	
-	private Piece whiteKnight1 = new Knight(1);
-	private Piece whiteKnight2 = new Knight(6);
-	
-	private Piece blackKnight1 = new Knight(57);
-	private Knight blackKnight2 = new Knight(62);
-	
-	/**
-	 * Bishops
-	 */
-	
-	private Bishop whiteBishop1 = new Bishop(2);
-	private Bishop whiteBishop2 = new Bishop(5);
-	
-	private Bishop blackBishop1 = new Bishop(58);
-	private Bishop blackBishop2 = new Bishop(61);
-	
-	/**
-	 * The Royal Family
-	 */
-	
-	private Queen whiteQueen = new Queen(3);
-	private King whiteKing = new King(4);
-	
-	private Queen blackQueen = new Queen(59);
-	private King blackKing = new King(60);
-	
-	public void movePiece ( int initialPosition , int finalPosition ) {
-		
-		
+		//squares = new Piece[64];
+		squares[0][0] = new Rook(true);
+		squares[1][0] = new Knight(true);
+		squares[2][0] = new Bishop(true);
+		squares[3][0] = new Queen(true);
+		squares[4][0] = new King(true);
+		squares[5][0] = new Bishop(true);
+		squares[6][0] = new Knight(true);
+		squares[7][0] = new Rook(true);
+		for ( int i = 0; i < 8; i++) {
+			squares[i][1] = new Pawn(true);
+		}
+		for ( int i = 0; i < 8; i++) {
+			for ( int j = 2; j < 5; j++) {
+				squares[i][j] = null;
+			}
+		}
+		for ( int i = 0; i < 8; i++) {
+			squares[i][6] = new Pawn(false);
+		}
+		squares[0][7] = new Rook(false);
+		squares[1][7] = new Knight(false);
+		squares[2][7] = new Bishop(false);
+		squares[3][7] = new Queen(false);
+		squares[4][7] = new King(false);
+		squares[5][7] = new Bishop(false);
+		squares[6][7] = new Knight(false);
+		squares[7][7] = new Rook(false);
+
+		isWhitesTurn = true;
 		
 	}
+	
+	
+	
+	public void move( String initialPosition , String finalPosition ) {
+
+		// Let's get the casts first....
+		
+		int initialFile = ((int) initialPosition.charAt(0)) - 65;
+		int initialRank = ((int) initialPosition.charAt(1)) - 49;
+		int finalFile = ((int) finalPosition.charAt(0)) - 65;
+		int finalRank = ((int) finalPosition.charAt(1)) - 49;
+		
+		// and a flag
+		
+		boolean flag = false;
+
+		
+		if ( initialPosition.length() != 2 || finalPosition.length() != 2 ) {
+			System.out.println("Error for location entry (expecting two characters for file and rank)");
+		} else if ( initialFile < 0 || initialFile > 7 || finalFile < 0 || finalFile > 7 ) {
+			System.out.println("Error for file entry (expecting A to H)");
+		} else if ( initialRank < 0 || initialRank > 7 || finalRank < 0 || finalRank > 7 ) {
+			System.out.println("Error for rank entry (expecting 1 to 8)");
+		} else if ( squares[ initialFile][initialRank] == null ) {
+			System.out.println("Error: There is no piece at " +initialPosition+ "!");
+		} else if ( squares[initialFile][initialRank].getColor() != isWhitesTurn ) {
+			System.out.println("It is not " +(squares[initialFile][initialRank].getColor()?"white":"black")+ "'s turn! Cannot move opponent's piece.");
+		} else if ( initialFile == finalFile && initialRank == finalRank ) {
+			System.out.println("Error: the piece would not be moving! (Same location)");
+		} else if ( squares[finalFile][finalRank] == null ) {
+	
+			//System.out.println("Getting ready to move!");
+
+			
+			/**
+			 * Pawn Movement
+			 */
+			if ( squares[ initialFile][initialRank].getType().equals("Pawn") ) {
+				
+				// There is no account for the first movement yet....
+				
+				if (squares[ initialFile][initialRank].getColor()) {
+					if ( (int)initialPosition.charAt(0) == (int)finalPosition.charAt(0) && (int)initialPosition.charAt(1) == (int)finalPosition.charAt(1)-1 ) {
+						
+						isWhitesTurn = !isWhitesTurn;
+						squares[ ((int) finalPosition.charAt(0)) - 65][finalPosition.charAt(1) - 49] = squares[ initialFile][initialRank];
+						squares[ initialFile][initialRank] = null;
+						
+					} else {
+						System.out.println("Illegal pawn movement!");
+					}
+				} else {
+					if ( (int)initialPosition.charAt(0) == (int)finalPosition.charAt(0) && (int)initialPosition.charAt(1) == (int)finalPosition.charAt(1)+1 ) {
+						
+						isWhitesTurn = !isWhitesTurn;
+						squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+						squares[ initialFile ][ initialRank ] = null;
+						
+					} else {
+						System.out.println("Illegal pawn movement!");
+					}
+				}
+			}
+				
+			/**
+			 * Rook Movement
+			 */
+			else if ( squares[initialFile][initialRank].getType().equals("Rook") ) {
+							
+				if ( initialFile == finalFile ) {
+					//horizontal movement for rook
+					if ( initialRank < finalRank ) {
+						
+						for ( int i = initialRank+1 ; i < finalRank ; i++ ) {
+							if (squares[initialFile][i] != null) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("Cannot move rook through another piece");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+											
+					} else  if ( initialRank > finalRank){
+						
+						for ( int i = initialRank-1 ; i > finalRank ; i-- ) {
+							if (squares[initialFile][i] != null) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("Cannot move rook through another piece");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+						
+					}
+					
+				} else if ( initialRank == finalRank ) {
+					//vertical movement for rook
+					if ( initialFile < finalFile ) {
+						
+						for ( int i = initialFile+1 ; i < finalFile ; i++ ) {
+							if (squares[i][initialRank] != null) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("Cannot move rook through another piece");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+											
+					} else  if ( initialFile > finalFile){
+						
+						for ( int i = initialFile-1 ; i > finalFile ; i-- ) {
+							if (squares[i][initialRank] != null) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("Cannot move rook through another piece");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+					
+					}
+					
+					
+				} else {
+					System.out.println("A rook doesn't move like that!");
+				}
+				
+				
+			}
+			
+			/**
+			 * Knight Movement
+			 */
+			else if ( squares[ initialFile][initialRank].getType().equals("Knight") ) {
+				
+				if ( ( Math.abs(initialFile - finalFile)) == Math.abs(initialRank - finalRank) 
+						|| Math.abs(initialFile - finalFile) > 2 || Math.abs(initialFile - finalFile) < 1 
+						|| Math.abs(initialRank - finalRank) > 2 || Math.abs(initialRank - finalRank) < 1 ) {
+					
+					System.out.println("A knight doesn't move like that!");
+					
+				} else {
+					isWhitesTurn = !isWhitesTurn;
+					squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+					squares[ initialFile ][ initialRank ] = null;
+				}
+				
+			}
+			
+			/**
+			 * Bishop Movement
+			 */
+			else if ( squares[ initialFile][initialRank].getType().equals("Bishop") ) {
+				
+				if ( Math.abs(initialFile - finalFile) != Math.abs(initialRank - finalRank) ) {
+					System.out.println("A bishop doesn't move like that!");
+				} else if ( initialFile - finalFile < 0) {
+					if ( initialRank - finalRank < 0 ) {
+						// case 1/4: NE direction
+						for ( int i = initialFile+1 ; i < finalFile ; i++ ) {
+							if ( squares[i][initialRank+(i-initialFile)] != null ) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("A bishop cannot jump over pieces!");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+						
+					} else {
+						// case 2/4: SE direction
+						for ( int i = initialFile+1 ; i < finalFile ; i++ ) {
+							if ( squares[i][initialRank-(i-initialFile)] != null ) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("A bishop cannot jump over pieces!");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+					}
+				} else {
+					if ( initialRank - finalRank < 0 ) {
+						// case 3/4: NW direction
+						for ( int i = initialFile-1 ; i > finalFile ; i-- ) {
+							if ( squares[i][initialRank+(initialFile-i)] != null ) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("A bishop cannot jump over pieces!");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+					} else {
+						// case 4/4: SW direction
+						for ( int i = initialFile-1 ; i > finalFile ; i-- ) {
+							if ( squares[i][initialRank-(initialFile-i)] != null ) {
+								flag = true;
+							}
+						}
+						if (flag) {
+							System.out.println("A bishop cannot jump over pieces!");
+						} else {
+							isWhitesTurn = !isWhitesTurn;
+							squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+							squares[ initialFile ][ initialRank ] = null;
+						}
+					} 
+				}
+				
+			}
+			
+			/**
+			 * Queen Movement
+			 */
+			else if ( squares[ initialFile][initialRank].getType().equals("Queen") ) {
+				
+			}
+			
+			/**
+			 * King Movement
+			 */
+			else if ( squares[ initialFile][initialRank].getType().equals("King") ) {
+				
+			}
+			
+			
+		} else if ( squares[ initialFile][initialRank].getColor() == isWhitesTurn ) {
+			System.out.println("Error: Cannot attack one's own piece!");
+		} else {
+			
+//			isWhitesTurn = !isWhitesTurn;
+			
+			System.out.println("Getting ready to attack!");
+			
+		}
+		
+		
+		
+		// need to research movement commands
+		
+	}
+	
+	public String pieceAt( String location ) {
+		
+		if ( location.length() != 2) {
+			return "Error for location entry (expecting two characters for file and rank)";
+		}
+		else if ( (int) location.charAt(0) < 65 || (int) location.charAt(0) > 72) {
+			return "Error for file entry (expecting A to H)";
+		}
+		else if ( ((int) location.charAt(1))-48 < 1 || ((int) location.charAt(1))-48 > 8 ) {
+			return "Error for rank entry (expecting 1 to 8)";
+		} else if ( squares[ ((int) location.charAt(0)) - 65][location.charAt(1) - 49] == null ) {
+			return " empty ";
+		}
+		else {
+			return squares[ ((int) location.charAt(0)) - 65][location.charAt(1) - 49].toString();
+		}
+			
+	}
+	
+	public void display() {
+		System.out.println("                             ");
+		System.out.println( (isWhitesTurn ? "  " : "=>") 
+				+"+-A--B--C--D--E--F--G--H-+  ");
+		
+		for ( int i = 8 ; i > 0 ; i-- ) {
+			for ( int j = 0 ; j < 10 ; j++ ) {
+				if ( j == 0 ) {
+					System.out.print( i + " |");
+				} else if ( j == 9) {
+					System.out.print( "| " + i );
+				} else if ( squares[j-1][i-1] == null )    {	
+					
+					if ( (i+j) % 2 == 0) {
+						System.out.print(":::");
+					} else {
+						System.out.print("   ");
+					}	
+					
+				} else {
+					
+					if ( squares[j-1][i-1].getColor() ) {
+						System.out.print("<");
+					} else {
+						System.out.print("[");
+					}
+					
+					if ( squares[j-1][i-1].getType().equals("Pawn") && squares[j-1][i-1].getColor()) {
+						System.out.print("P");
+					} else if ( squares[j-1][i-1].getType().equals("Pawn") && !squares[j-1][i-1].getColor()) {
+						System.out.print("p");
+					}
+					else if ( squares[j-1][i-1].getType().equals("Rook") && squares[j-1][i-1].getColor()) {
+						System.out.print("R");
+					} else if ( squares[j-1][i-1].getType().equals("Rook") && !squares[j-1][i-1].getColor()) {
+						System.out.print("r");
+					}
+					else if ( squares[j-1][i-1].getType().equals("Knight") && squares[j-1][i-1].getColor()) {
+						System.out.print("N");
+					} else if ( squares[j-1][i-1].getType().equals("Knight") && !squares[j-1][i-1].getColor()) {
+						System.out.print("n");
+					}
+					else if ( squares[j-1][i-1].getType().equals("Bishop") && squares[j-1][i-1].getColor()) {
+						System.out.print("B");
+					} else if ( squares[j-1][i-1].getType().equals("Bishop") && !squares[j-1][i-1].getColor()) {
+						System.out.print("b");
+					}
+					else if ( squares[j-1][i-1].getType().equals("Queen") && squares[j-1][i-1].getColor()) {
+						System.out.print("Q");
+					} else if ( squares[j-1][i-1].getType().equals("Queen") && !squares[j-1][i-1].getColor()) {
+						System.out.print("q");
+					}
+					else if ( squares[j-1][i-1].getType().equals("King") && squares[j-1][i-1].getColor()) {
+						System.out.print("K");
+					} else if ( squares[j-1][i-1].getType().equals("King") && !squares[j-1][i-1].getColor()) {
+						System.out.print("k");
+					}
+					
+					if ( squares[j-1][i-1].getColor() ) {
+						System.out.print(">");
+					} else {
+						System.out.print("]");
+					}
+					
+				}
+				
+			}
+			System.out.println("");
+		}
+		System.out.println( (isWhitesTurn ? "=>" : "  ") 
+				+"+-A--B--C--D--E--F--G--H-+  ");
+
+
+		
+	}
+	
 	
 	
 	
