@@ -2,7 +2,7 @@ package theChessBot;
 
 public class Piece {
 
-	protected int position; // goes from 0 to 63
+	//protected int position; // goes from 0 to 63
 	protected boolean isWhite;
 	
 	public Piece ( boolean isWhite) {
@@ -12,6 +12,10 @@ public class Piece {
 	
 	public String getType () {
 		return "Piece";
+	}
+	
+	public boolean getColor ( ) {
+		return isWhite;
 	}
 		
 }
