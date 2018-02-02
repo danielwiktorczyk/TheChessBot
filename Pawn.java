@@ -4,7 +4,7 @@ public class Pawn extends Piece {
 
 	public Pawn ( boolean isWhite) {
 		super( isWhite);
-		System.out.println("Creating a " +(isWhite?"white":"black")+ " pawn");
+		//System.out.println("Creating a " +(isWhite?"white":"black")+ " pawn");
 		
 	}
 	
@@ -15,9 +15,5 @@ public class Pawn extends Piece {
 	public String getType () {
 		return "Pawn";
 	}
-	
-//	public Pawn ( int position ) {
-//		this.position = position;
-//	}
 	
 }
