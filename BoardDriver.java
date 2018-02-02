@@ -46,6 +46,7 @@ public class BoardDriver {
 //		mainBoard.display();
 //		
 //		mainBoard.move("A3","A7");
+		
 		mainBoard.display();
 		
 		boolean go = true;
@@ -66,9 +67,9 @@ public class BoardDriver {
 			mainBoard.move( initialLocation , finalLocation );
 			mainBoard.display();
 			
-			System.out.println("Continue? y / n");
-			if (keys.next().equalsIgnoreCase("n"))
-				go = false;
+//			System.out.println("Continue? y / n");
+//			if (keys.next().equalsIgnoreCase("n"))
+//				go = false;
 			
 			
 			
