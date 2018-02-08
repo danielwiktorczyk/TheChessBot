@@ -14,6 +14,8 @@ public class Board {
 	private Piece[][] squaresAtPreviousTurn = new Piece [8][8];
 	private boolean isWhitesTurn;
 	private boolean flag;
+	private int moveNumber;
+	private int[] kingLocation = new int[2];
 	
 	public Board()
 	{
@@ -148,11 +150,9 @@ public class Board {
 		if (squares[ initialFile][initialRank].getColor()) {
 			
 			// pawn movement for white pawns
-			System.out.println("Got here!");
 
 			if ( (initialFile == finalFile && initialRank == finalRank-1)
 					|| ( initialFile == finalFile && initialRank == 1 && (finalRank - initialRank) == 2 ) ) { // bottom logic for first move
-				System.out.println("Got here too!");
 				completeMovement ( initialFile , initialRank , finalFile , finalRank );
 				
 			} else {
@@ -342,6 +342,9 @@ public class Board {
 	}
 	
 	/**
+	
+
+	/**
 	 * Applies movement logic for a queen
 	 * @param initialFile
 	 * @param initialRank
@@ -507,22 +510,21 @@ public class Board {
 		// in the case of a desired "UNDO"
 		squaresAtPreviousTurn = squares; 
 		
-		if ( squares[finalFile][finalRank] == null) {
+		// let's see if it causes a check for the player (e.g. illegal move?)
+		squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
+		squares[ initialFile ][ initialRank ] = null;
+		
+		if ( isCheck( isWhitesTurn ) ) {
+			
+			System.out.println("Cannot complete movement: would be in check!");
+			squares=squaresAtPreviousTurn;
+			
+		} else {
 			System.out.println("Moving!");
 			isWhitesTurn = !isWhitesTurn;
-			squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
-			squares[ initialFile ][ initialRank ] = null;
-		} else {
-			System.out.println("Attacking!");
-			isWhitesTurn = !isWhitesTurn;
-			squares[ finalFile ][ finalRank] = squares[ initialFile ][ initialRank ];
-			squares[ initialFile ][ initialRank ] = null;
-			// update Dead Pieces array in the future and other stuff
 		}
 				
 	}
-
-
 
 	/**
 	 * 
@@ -534,10 +536,412 @@ public class Board {
 	 */
 	private boolean isCheck ( boolean isWhite ) {
 		
-		return false; // for now
+		// let's locate the isWhite king
+		
+		for ( int i = 0 ; i < 8 ; i++ ) {
+			
+			for ( int j = 0 ; j < 8 ; j++ ) {
+				
+				if ( squares[i][j] != null
+						&& squares[i][j].getType().equals("King") 
+						&& squares[i][j].getColor() == isWhite ) {
+					kingLocation[0] = i ; 
+					kingLocation[1] = j ;
+					break;
+				}
+				
+			}
+		
+		}
+		
+		// now let's check for any attacking knights....
+		if ( isCheckByKnight( isWhite ) )
+			flag = true ;
+		
+		// ... attacking rooks, bishops or queens
+		if ( isCheckBySlider( isWhite ) ) {
+			flag = true ;
+		}
+		
+		// ... attacking pawns
+		if ( isCheckByPawn( isWhite ) ) {
+			flag = true ;
+		}
+		
+		// ... another king too close for comfort
+		if ( isCheckByKing( ) ) {
+			flag = true ;
+		}
+		
+		if (flag)
+			return true;
+		else return false;
+		
+	}
+	
+	private boolean isCheckByKnight ( boolean isWhite ) {
+		
+		// for attacking knights far left of the king
+		if ( kingLocation[0] - 2 >= 0 ) {
+			
+			// ... and above
+			if ( kingLocation[1] + 1 <= 7 ) {
+				
+				if ( squares[ kingLocation[0] - 2 ][kingLocation[1] + 1 ] != null
+						&& squares[ kingLocation[0] - 2 ][kingLocation[1] + 1 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] - 2 ][kingLocation[1] + 1 ].getColor() != isWhite ) {
+				
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			} 
+			
+			// ... and below
+			if ( kingLocation[1] - 1 >= 0 ) {
+				
+				if ( squares[ kingLocation[0] - 2 ][kingLocation[1] - 1 ] != null
+						&& squares[ kingLocation[0] - 2 ][kingLocation[1] - 1 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] - 2 ][kingLocation[1] - 1 ].getColor() != isWhite ) {
+					
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			}	
+			
+		}
+		
+		// for attacking knights far right of the king
+		if ( kingLocation[0] + 2 <= 7 ) {
+			
+			// ... and above
+			if ( kingLocation[1] + 1 <= 7 ) {
+				
+				if ( squares[ kingLocation[0] + 2 ][kingLocation[1] + 1 ] != null
+						&& squares[ kingLocation[0] + 2 ][kingLocation[1] + 1 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] + 2 ][kingLocation[1] + 1 ].getColor() != isWhite ) {
+				
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			}
+			
+			// ... and below
+			if ( kingLocation[1] - 1 >= 0 ) {
+				
+				if ( squares[ kingLocation[0] + 2 ][kingLocation[1] - 1 ] != null
+						&& squares[ kingLocation[0] + 2 ][kingLocation[1] - 1 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] + 2 ][kingLocation[1] - 1 ].getColor() != isWhite ) {
+					
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			}	
+			
+		}
+		
+		// for attacking knights above the king
+		if ( kingLocation[1] + 2 <= 7 ) {
+			
+			// ... below and to the right
+			if ( kingLocation[0] + 1 <= 7 ) {
+				
+				if ( squares[ kingLocation[0] + 1 ][kingLocation[1] + 2 ] != null
+						&& squares[ kingLocation[0] + 1 ][kingLocation[1] + 2 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] + 1 ][kingLocation[1] + 2 ].getColor() != isWhite ) {
+				
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			} 
+			// ... below and to the left
+			if ( kingLocation[1] - 1 >= 0 ) {
+				
+				if ( squares[ kingLocation[0] - 1 ][kingLocation[1] + 2 ] != null
+						&& squares[ kingLocation[0] - 1 ][kingLocation[1] + 2 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] - 1 ][kingLocation[1] + 2 ].getColor() != isWhite ) {
+				
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			}	
+			
+		}
+		
+		// for attacking knights below the king
+		if ( kingLocation[1] - 2 >= 0 ) {
+			
+			// ... below and to the right
+			if ( kingLocation[0] + 1 <= 7 ) {
+				
+				if ( squares[ kingLocation[0] + 1 ][kingLocation[1] + 2 ] != null
+						&& squares[ kingLocation[0] + 1 ][kingLocation[1] + 2 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] + 1 ][kingLocation[1] + 2 ].getColor() != isWhite ) {
+				
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			} 
+			// ... below and to the left
+			if ( kingLocation[1] - 1 >= 0 ) {
+				
+				if ( squares[ kingLocation[0] - 1 ][kingLocation[1] + 2 ] != null
+						&& squares[ kingLocation[0] - 1 ][kingLocation[1] + 2 ].getType().equals("Knight") 
+						&& squares[ kingLocation[0] - 1 ][kingLocation[1] + 2 ].getColor() != isWhite ) {
+				
+					System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky knight!");
+					return true;
+					
+				}
+				
+			}	
+			
+		}
+		
+		return false;
 		
 	}
 
+	private boolean isCheckBySlider ( boolean isWhite ) {
+		
+		// let's check the left side of the king
+		for ( int i = kingLocation[0] ; i >= 0 ; i-- ) {
+			if ( squares[i][ kingLocation[1] ] == null ) {
+				continue;
+			} else if ( squares[i][ kingLocation[1] ].getType().equals("Rook") 
+					&& squares[i][ kingLocation[1] ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky rook!");
+				return true;
+			} else if ( squares[i][ kingLocation[1] ].getType().equals("Queen") 
+					&& squares[i][ kingLocation[1] ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}
+			
+		// let's check the right side of the king
+		for ( int i = kingLocation[0] ; i < 8 ; i++ ) {
+			if ( squares[i][ kingLocation[1] ] == null ) {
+				continue;
+			} else if ( squares[i][ kingLocation[1] ].getType().equals("Rook") 
+					&& squares[i][ kingLocation[1] ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky rook!");
+				return true;
+			} else if ( squares[i][ kingLocation[1] ].getType().equals("Queen") 
+					&& squares[i][ kingLocation[1] ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}	
+		
+		// let's check above the king
+		for ( int i = kingLocation[1] ; i < 8 ; i++ ) {
+			if ( squares[ kingLocation[1] ][ i ] == null ) {
+				continue;
+			} else if ( squares[ kingLocation[1] ][ i ].getType().equals("Rook") 
+					&& squares[ kingLocation[1] ][ i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky rook!");
+				return true;
+			} else if ( squares[ kingLocation[1] ][ i ].getType().equals("Queen") 
+					&& squares[ kingLocation[1] ][ i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}	
+		
+		// let's check below the king
+		for ( int i = kingLocation[1] ; i >= 0 ; i-- ) {
+			if ( squares[ kingLocation[1] ][ i ] == null ) {
+				continue;
+			} else if ( squares[ kingLocation[1] ][ i ].getType().equals("Rook") 
+					&& squares[ kingLocation[1] ][ i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky rook!");
+				return true;
+			} else if ( squares[ kingLocation[1] ][ i ].getType().equals("Queen") 
+					&& squares[ kingLocation[1] ][ i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}	
+		
+		// let's check the NW diagonal 
+		for ( int i = 1 ; (kingLocation[0]-i >= 0) && (kingLocation[1]+i <= 7) ; i++ ) {
+			if ( squares[ kingLocation[0]-i ][ kingLocation[1]+i ] == null ) {
+				continue;
+			} else if ( squares[ kingLocation[0]-i ][ kingLocation[1]+i ].getType().equals("Bishop") 
+					&& squares[ kingLocation[0]-i ][ kingLocation[1]+i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky bishop!");
+				return true;
+			} else if ( squares[ kingLocation[0]-i ][ kingLocation[1]+i ].getType().equals("Queen") 
+					&& squares[ kingLocation[0]-i ][ kingLocation[1]+i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}	
+		
+		// let's check the NE diagonal 
+		for ( int i = 1 ; (kingLocation[0]+i <= 7 ) && (kingLocation[1]+i <= 7) ; i++ ) {
+			if ( squares[ kingLocation[0]+i ][ kingLocation[1]+i ] == null ) {
+				continue;
+			} else if ( squares[ kingLocation[0]+i ][ kingLocation[1]+i ].getType().equals("Bishop") 
+					&& squares[ kingLocation[0]+i ][ kingLocation[1]+i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky bishop!");
+				return true;
+			} else if ( squares[ kingLocation[0]+i ][ kingLocation[1]+i ].getType().equals("Queen") 
+					&& squares[ kingLocation[0]+i ][ kingLocation[1]+i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}	
+		
+		// let's check the SE diagonal 
+		for ( int i = 1 ; (kingLocation[0]+i <= 7 ) && (kingLocation[1]-i >= 0 ) ; i++ ) {
+			if ( squares[ kingLocation[0]+i ][ kingLocation[1]+i ] == null ) {
+				continue;
+			} else if ( squares[ kingLocation[0]+i ][ kingLocation[1]-i ].getType().equals("Bishop") 
+					&& squares[ kingLocation[0]+i ][ kingLocation[1]-i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky bishop!");
+				return true;
+			} else if ( squares[ kingLocation[0]+i ][ kingLocation[1]-i ].getType().equals("Queen") 
+					&& squares[ kingLocation[0]+i ][ kingLocation[1]-i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}	
+		
+		// let's check the SW diagonal 
+		for ( int i = 1 ; (kingLocation[0]-i >= 0 ) && (kingLocation[1]-i >= 0 ) ; i++ ) {
+			if ( squares[ kingLocation[0]-+i ][ kingLocation[1]+i ] == null ) {
+				continue;
+			} else if ( squares[ kingLocation[0]-i ][ kingLocation[1]-i ].getType().equals("Bishop") 
+					&& squares[ kingLocation[0]-i ][ kingLocation[1]-i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky bishop!");
+				return true;
+			} else if ( squares[ kingLocation[0]-i ][ kingLocation[1]-i ].getType().equals("Queen") 
+					&& squares[ kingLocation[0]-i ][ kingLocation[1]-i ].getColor() != isWhite ) {
+				System.out.println("Check on the " +(isWhite?"white":"black")+ " king by a pesky queen!");
+				return true;
+			} else {
+				break;
+			}
+		}	
+		
+		return false;
+		
+	}
+	
+	private boolean isCheckByPawn ( boolean isWhite ) {
+		
+		// TO BE DONE
+		
+		return false;
+		
+	}
+	
+	private boolean isCheckByKing (  ) {
+		
+		
+		if ( kingLocation[0]-1 >= 0 ) { //check 3 squares on left
+			
+			// check above, below, and immediate left
+			if ( kingLocation[1]+1 <= 7 
+					&& squares[ kingLocation[0]-1 ][ kingLocation[1]+1 ] != null 
+					&& squares[ kingLocation[0]-1 ][ kingLocation[1]+1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			} else if ( kingLocation[1]-1 >= 0 
+					&& squares[ kingLocation[0]-1 ][ kingLocation[1]-1 ] != null 
+					&& squares[ kingLocation[0]-1 ][ kingLocation[1]-1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			} else if ( squares[ kingLocation[0]-1 ][ kingLocation[1]+1 ] != null 
+					&& squares[ kingLocation[0]-1 ][ kingLocation[1]+1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			}
+			
+		} else if ( kingLocation[0]+1 <= 7 ) { //check 3 squares on right
+			
+			// check above, below, and immediate right
+			if ( kingLocation[1]+1 <= 7 
+					&& squares[ kingLocation[0]+1 ][ kingLocation[1]+1 ] != null 
+					&& squares[ kingLocation[0]+1 ][ kingLocation[1]+1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			} else if ( kingLocation[1]-1 >= 0 
+					&& squares[ kingLocation[0]+1 ][ kingLocation[1]-1 ] != null 
+					&& squares[ kingLocation[0]+1 ][ kingLocation[1]-1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			} else if ( squares[ kingLocation[0]+1 ][ kingLocation[1]+1 ] != null 
+					&& squares[ kingLocation[0]+1 ][ kingLocation[1]+1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			}
+			
+		} else { // check 2 squares above and below
+			
+			// check above, below
+			if ( kingLocation[1]+1 <= 7 
+					&& squares[ kingLocation[0] ][ kingLocation[1]+1 ] != null 
+					&& squares[ kingLocation[0] ][ kingLocation[1]+1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			} else if ( kingLocation[1]-1 >= 0 
+					&& squares[ kingLocation[0] ][ kingLocation[1]-1 ] != null 
+					&& squares[ kingLocation[0] ][ kingLocation[1]-1 ].getType().equals("King")) {
+				
+				System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+				return true;
+				
+			}
+			
+		}
+			
+		return false;
+				
+	}
 	
 	/**
 	 * Slightly obsolete method... 
@@ -569,7 +973,7 @@ public class Board {
 	public void display() {
 		System.out.println("                             ");
 		System.out.println( (isWhitesTurn ? "  " : "=>") 
-				+"+-A--B--C--D--E--F--G--H-+  ");
+				+"+-A--B--C--D--E--F--G--H-+     Move: " +moveNumber);
 		
 		for ( int i = 8 ; i > 0 ; i-- ) {
 			for ( int j = 0 ; j < 10 ; j++ ) {
