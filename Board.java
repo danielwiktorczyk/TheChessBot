@@ -58,6 +58,11 @@ public class Board {
 	public void move( String initialPosition , String finalPosition ) {
 
 		
+		// let's get the format right
+		
+		initialPosition = initialPosition.toUpperCase(); 
+		finalPosition = finalPosition.toUpperCase(); 
+		
 		
 		// Let's get the casts first....
 		
