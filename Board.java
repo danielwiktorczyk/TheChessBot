@@ -152,31 +152,101 @@ public class Board {
 		if (squares[ initialFile][initialRank].getColor()) {
 			
 			// pawn movement for white pawns
-
-			if ( (initialFile == finalFile && initialRank == finalRank-1)
-					|| ( initialFile == finalFile && initialRank == 1 && (finalRank - initialRank) == 2 ) // bottom logic for first move
-					|| ( (initialFile == (finalFile-1)) && (initialRank == (finalRank-1)) ) // logic for attacking right
-					|| ( (initialFile == (finalFile+1)) && (initialRank == (finalRank-1)) ) ) { // logic for attacking left
-				
-				completeMovement ( initialFile , initialRank , finalFile , finalRank );
-				
+			if (initialFile == finalFile && initialRank == finalRank-1) { // for standard advancement
+				if ( squares[finalFile][finalRank] == null) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				}
+			} else if ( initialFile == finalFile && initialRank == 1 && (finalRank - initialRank) == 2 ) { // for double advancement
+				if ( squares[finalFile][finalRank] == null && squares[finalFile][finalRank-1] == null ) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				}
+			} else if ( (initialFile == (finalFile-1)) && (initialRank == (finalRank-1)) ) { // logic for attacking right
+				if ( squares[finalFile][finalRank] != null ) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				} else if ( squaresAtPreviousTurn[finalFile][finalRank+1] != null ) { // logic for EN PASSENT right
+					System.out.println("GOT HERE!");
+					if ( 
+							(squaresAtPreviousTurn[finalFile][finalRank+1].getColor() != isWhitesTurn)
+							&& squaresAtPreviousTurn[finalFile][finalRank+1].getType().equals("Pawn") 
+							&& squaresAtPreviousTurn[finalFile][finalRank] == null
+							&& squaresAtPreviousTurn[finalFile][finalRank-1] == null
+							&& squares[finalFile][finalRank-1] != null
+							&& (squares[finalFile][finalRank-1].getColor() != isWhitesTurn)
+							&& squares[finalFile][finalRank-1].getType().equals("Pawn") ) {
+						System.out.println("GOT HERE!");
+						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
+					}
+				}
+			} else if ( (initialFile == (finalFile+1)) && (initialRank == (finalRank-1)) ) { // logic for attacking left
+				if ( squares[finalFile][finalRank] != null ) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				} else if ( squaresAtPreviousTurn[finalFile][finalRank+1] != null ) { // logic for EN PASSENT left
+					System.out.println("GOT HERE!");
+					if ( 
+							(squaresAtPreviousTurn[finalFile][finalRank+1].getColor() != isWhitesTurn)
+							&& squaresAtPreviousTurn[finalFile][finalRank+1].getType().equals("Pawn") 
+							&& squaresAtPreviousTurn[finalFile][finalRank] == null
+							&& squaresAtPreviousTurn[finalFile][finalRank-1] == null
+							&& squares[finalFile][finalRank-1] != null
+							&& (squares[finalFile][finalRank-1].getColor() != isWhitesTurn)
+							&& squares[finalFile][finalRank-1].getType().equals("Pawn") ) {
+						System.out.println("GOT HERE!");
+						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
+					}
+				}
 			} else {
 				System.out.println("Illegal pawn movement!");
 			}
+			
 		} else {
 			
 			// pawn movement for black pawns
-			
-			if ( ( (initialFile == finalFile) && (initialRank == finalRank+1) ) // normal movement 
-					|| ( (initialFile == finalFile) && (initialRank == 6) && (initialRank - finalRank) == 2 )  // bottom logic for first move
-					|| ( (initialFile == (finalFile-1)) && (initialRank == (finalRank+1)) ) // logic for attacking right
-					|| ( (initialFile == (finalFile+1)) && (initialRank == (finalRank+1)) ) ) { // logic for attacking left
-				
-				completeMovement ( initialFile , initialRank , finalFile , finalRank );
-				
+			if (initialFile == finalFile && initialRank == finalRank+1) { // for standard advancement
+				if ( squares[finalFile][finalRank] == null) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				}
+			} else if ( initialFile == finalFile && initialRank == 6 && (finalRank - initialRank) == -2 ) { // for double advancement
+				if ( squares[finalFile][finalRank] == null && squares[finalFile][finalRank+1] == null ) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				}
+			} else if ( (initialFile == (finalFile-1)) && (initialRank == (finalRank+1)) ) { // logic for attacking right
+				if ( squares[finalFile][finalRank] != null ) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				} else if ( squaresAtPreviousTurn[finalFile][finalRank-1] != null ){
+					System.out.println("GOT HERE!");
+					if ( 
+							(squaresAtPreviousTurn[finalFile][finalRank-1].getColor() != isWhitesTurn)
+							&& squaresAtPreviousTurn[finalFile][finalRank-1].getType().equals("Pawn") 
+							&& squaresAtPreviousTurn[finalFile][finalRank] == null
+							&& squaresAtPreviousTurn[finalFile][finalRank+1] == null
+							&& squares[finalFile][finalRank+1] != null
+							&& (squares[finalFile][finalRank+1].getColor() != isWhitesTurn)
+							&& squares[finalFile][finalRank+1].getType().equals("Pawn") ) {
+						System.out.println("GOT HERE!");
+						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
+					}
+				}
+			} else if ( (initialFile == (finalFile+1)) && (initialRank == (finalRank+1)) ) { // logic for attacking left
+				if ( squares[finalFile][finalRank] != null ) {
+					completeMovement ( initialFile , initialRank , finalFile , finalRank );
+				} else if ( squaresAtPreviousTurn[finalFile][finalRank-1] != null ){
+					System.out.println("GOT HERE!");
+					if ( 
+							(squaresAtPreviousTurn[finalFile][finalRank-1].getColor() != isWhitesTurn)
+							&& squaresAtPreviousTurn[finalFile][finalRank-1].getType().equals("Pawn") 
+							&& squaresAtPreviousTurn[finalFile][finalRank] == null
+							&& squaresAtPreviousTurn[finalFile][finalRank+1] == null
+							&& squares[finalFile][finalRank+1] != null
+							&& (squares[finalFile][finalRank+1].getColor() != isWhitesTurn)
+							&& squares[finalFile][finalRank+1].getType().equals("Pawn") ) {
+						System.out.println("GOT HERE!");
+						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
+					}
+				}
 			} else {
 				System.out.println("Illegal pawn movement!");
 			}
+						
 		}
 		
 	}
@@ -515,7 +585,11 @@ public class Board {
 		
 		// let's first save the previous position of the board 
 		// in the case of a desired "UNDO"
-		squaresAtPreviousTurn = squares;
+		for ( int i = 0 ; i < 7 ;  i++ ) {
+			for ( int j = 0 ; j < 7 ; j++ ) {
+				squaresAtPreviousTurn[i][j] = squares[i][j];
+			}
+		}
 		
 		// let's see if it causes a check for the player (e.g. illegal move?)
 		
@@ -542,6 +616,66 @@ public class Board {
 		}
 				
 	}
+
+	
+	/**
+	 * 
+	 * Will complete a en passent capture
+	 * 
+	 * @param initialFile
+	 * @param initialRank
+	 * @param finalFile
+	 * @param finalRank
+	 */
+	private void completeEnPassent(int initialFile, int initialRank, int finalFile, int finalRank) {
+
+		// let's first save the previous position of the board 
+		// in the case of a desired "UNDO"
+		for ( int i = 0 ; i < 7 ;  i++ ) {
+			for ( int j = 0 ; j < 7 ; j++ ) {
+				squaresAtPreviousTurn[i][j] = squares[i][j];
+			}
+		}
+		
+		// let's see if it causes a check for the player (e.g. illegal move?)
+		Piece initialPieceHolder = squares[ initialFile ][ initialRank ];
+		Piece finalPieceHolder = null;
+		if ( isWhitesTurn) {
+			finalPieceHolder = squares[ finalFile ][ finalRank-1 ];
+			squares[ finalFile ][ finalRank-1 ] = null;
+		} else {
+			finalPieceHolder = squares[ finalFile ][ finalRank+1 ];
+			squares[ finalFile ][ finalRank+1 ] = null;
+		}
+		squares[ finalFile ][ finalRank ] = squares[ initialFile ][ initialRank ];
+		squares[ initialFile ][ initialRank ] = null;
+		
+		if ( isCheck( isWhitesTurn ) ) {
+			
+			System.out.println("Cannot complete movement: would be in check!");
+			
+			squares[ initialFile ][ initialRank ] = initialPieceHolder;
+			squares[ finalFile ][ finalRank ] = null;
+			if ( isWhitesTurn) {
+				squares[ finalFile ][ finalRank-1 ] = finalPieceHolder;
+			} else {
+				squares[ finalFile ][ finalRank+1 ] = finalPieceHolder;
+			}
+			
+			
+		} else {
+			//System.out.println("Moving!");
+			isWhitesTurn = !isWhitesTurn;
+			moveNumber += 1;
+			if ( isCheck( isWhitesTurn )) {
+				System.out.println( "   Check!   ");
+			}
+			
+		}
+		
+	}
+
+
 
 	/**
 	 * 
