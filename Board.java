@@ -17,6 +17,16 @@ public class Board {
 	private int moveNumber;
 	private int[] kingLocation = new int[2];
 	
+	// attributes for castling rights
+	private boolean hasLeftWhiteRookMoved;
+	private boolean hasRightWhiteRookMoved;
+	private boolean hasLeftBlackRookMoved;
+	private boolean hasRightBlackRookMoved;
+	private boolean hasWhiteKingMoved;
+	private boolean hasBlackKingMoved;
+
+	
+	
 	public Board()
 	{
 		
@@ -576,12 +586,19 @@ public class Board {
 	 */
 	private void moveKing ( int initialFile , int initialRank , int finalFile , int finalRank ) {
 		
-		// DOES NOT account for castling yet!
-		
 		if ( Math.abs(finalRank-initialRank) > 1 || Math.abs(finalFile-initialFile) > 1 ) {
+			
 			System.out.println("A king doesn't move like that!");
+			
+		} else if ( initialRank == finalRank && ( initialFile == finalFile+2 || initialFile == finalFile-2 )) {
+			//castling
+			System.out.println("You're trying to castle....");
+			completeCastling( initialFile , initialRank , finalFile , finalRank );
+			
 		} else {
+			
 			completeMovement ( initialFile , initialRank , finalFile , finalRank );
+			
 		}
 		
 	}
@@ -675,6 +692,72 @@ public class Board {
 			if ( isCheck( isWhitesTurn )) {
 				System.out.println( "   Check!   ");
 			}
+			
+		}
+		
+	}
+	
+	private void completeCastling( int initialFile , int initialRank , int finalFile , int finalRank ) {
+		
+		
+		flag = true;
+		
+		// let's validate if castling oppertunities remain
+		if ( isWhitesTurn && hasWhiteKingMoved ) {
+			
+			
+			if ( initialRank - finalRank == 2 && !hasLeftWhiteRookMoved ) {
+				
+				flag = false;
+				
+			} else if ( initialRank - finalRank == -2 && !hasRightWhiteRookMoved ) {
+				
+				flag = false;
+				
+			}
+			
+			
+		} else if ( hasBlackKingMoved ) {
+			
+			if ( initialRank - finalRank == 2 && !hasLeftBlackRookMoved ) {
+				
+				flag = false;
+				
+			} else if ( initialRank - finalRank == -2 && !hasRightBlackRookMoved ) {
+				
+				flag = false;
+				
+			}
+			
+		}
+		
+		// now that we confirmed, let's check for checks
+		if (!flag) {
+
+			// let's see if it causes a check for the player (e.g. illegal move?)
+			// ... for where the king is right now
+			if ( isCheck(isWhitesTurn) ){
+				
+				System.out.println("Cannot castle while in check!");
+				
+			} else {
+				
+				// let's first save the previous position of the board 
+				// in the case of a desired "UNDO"
+				for ( int i = 0 ; i < 7 ;  i++ ) {
+					
+					for ( int j = 0 ; j < 7 ; j++ ) {
+						
+						squaresAtPreviousTurn[i][j] = squares[i][j];
+					}
+				}
+				
+				
+				
+				
+				
+				
+			}		
 			
 		}
 		
