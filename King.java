@@ -12,7 +12,7 @@ public class King extends Piece {
 	}
 	
 	public String getType () {
-		return "Knight";
+		return "King";
 	}
 
 }
