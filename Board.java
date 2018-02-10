@@ -19,12 +19,12 @@ public class Board {
 	private int[] kingLocation = new int[2];
 	
 	// attributes for castling rights
-	private boolean hasLeftWhiteRookMoved;
-	private boolean hasRightWhiteRookMoved;
-	private boolean hasLeftBlackRookMoved;
-	private boolean hasRightBlackRookMoved;
-	private boolean hasWhiteKingMoved;
-	private boolean hasBlackKingMoved;
+	private boolean hasLeftWhiteRookMoved=false;
+	private boolean hasRightWhiteRookMoved=false;
+	private boolean hasLeftBlackRookMoved=false;
+	private boolean hasRightBlackRookMoved=false;
+	private boolean hasWhiteKingMoved=false;
+	private boolean hasBlackKingMoved=false;
 
 	// attributes for pawn promotion
 //	private String promotionType;
@@ -65,7 +65,6 @@ public class Board {
 		isWhitesTurn = true;
 		
 	}
-	
 	
 	
 	public void move( String initialPosition , String finalPosition ) {
@@ -182,7 +181,7 @@ public class Board {
 				if ( squares[finalFile][finalRank] != null ) {
 					completeMovement ( initialFile , initialRank , finalFile , finalRank );
 				} else if ( squaresAtPreviousTurn[finalFile][finalRank+1] != null ) { // logic for EN PASSENT right
-					System.out.println("GOT HERE!");
+				
 					if ( 
 							(squaresAtPreviousTurn[finalFile][finalRank+1].getColor() != isWhitesTurn)
 							&& squaresAtPreviousTurn[finalFile][finalRank+1].getType().equals("Pawn") 
@@ -191,7 +190,7 @@ public class Board {
 							&& squares[finalFile][finalRank-1] != null
 							&& (squares[finalFile][finalRank-1].getColor() != isWhitesTurn)
 							&& squares[finalFile][finalRank-1].getType().equals("Pawn") ) {
-						System.out.println("GOT HERE!");
+						
 						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
 					}
 				}
@@ -199,7 +198,7 @@ public class Board {
 				if ( squares[finalFile][finalRank] != null ) {
 					completeMovement ( initialFile , initialRank , finalFile , finalRank );
 				} else if ( squaresAtPreviousTurn[finalFile][finalRank+1] != null ) { // logic for EN PASSENT left
-					System.out.println("GOT HERE!");
+					
 					if ( 
 							(squaresAtPreviousTurn[finalFile][finalRank+1].getColor() != isWhitesTurn)
 							&& squaresAtPreviousTurn[finalFile][finalRank+1].getType().equals("Pawn") 
@@ -208,7 +207,7 @@ public class Board {
 							&& squares[finalFile][finalRank-1] != null
 							&& (squares[finalFile][finalRank-1].getColor() != isWhitesTurn)
 							&& squares[finalFile][finalRank-1].getType().equals("Pawn") ) {
-						System.out.println("GOT HERE!");
+						
 						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
 					}
 				}
@@ -231,7 +230,7 @@ public class Board {
 				if ( squares[finalFile][finalRank] != null ) {
 					completeMovement ( initialFile , initialRank , finalFile , finalRank );
 				} else if ( squaresAtPreviousTurn[finalFile][finalRank-1] != null ){
-					System.out.println("GOT HERE!");
+				
 					if ( 
 							(squaresAtPreviousTurn[finalFile][finalRank-1].getColor() != isWhitesTurn)
 							&& squaresAtPreviousTurn[finalFile][finalRank-1].getType().equals("Pawn") 
@@ -240,7 +239,7 @@ public class Board {
 							&& squares[finalFile][finalRank+1] != null
 							&& (squares[finalFile][finalRank+1].getColor() != isWhitesTurn)
 							&& squares[finalFile][finalRank+1].getType().equals("Pawn") ) {
-						System.out.println("GOT HERE!");
+						
 						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
 					}
 				}
@@ -248,7 +247,7 @@ public class Board {
 				if ( squares[finalFile][finalRank] != null ) {
 					completeMovement ( initialFile , initialRank , finalFile , finalRank );
 				} else if ( squaresAtPreviousTurn[finalFile][finalRank-1] != null ){
-					System.out.println("GOT HERE!");
+					
 					if ( 
 							(squaresAtPreviousTurn[finalFile][finalRank-1].getColor() != isWhitesTurn)
 							&& squaresAtPreviousTurn[finalFile][finalRank-1].getType().equals("Pawn") 
@@ -257,7 +256,7 @@ public class Board {
 							&& squares[finalFile][finalRank+1] != null
 							&& (squares[finalFile][finalRank+1].getColor() != isWhitesTurn)
 							&& squares[finalFile][finalRank+1].getType().equals("Pawn") ) {
-						System.out.println("GOT HERE!");
+						
 						completeEnPassent ( initialFile , initialRank , finalFile , finalRank );
 					}
 				}
@@ -380,7 +379,9 @@ public class Board {
 		if ( Math.abs(initialFile - finalFile) != Math.abs(initialRank - finalRank) ) {
 			System.out.println("A bishop doesn't move like that!");
 		} else if ( initialFile - finalFile < 0) {
+			
 			if ( initialRank - finalRank < 0 ) {
+				
 				// case 1/4: NE direction
 				for ( int i = initialFile+1 ; i < finalFile ; i++ ) {
 					if ( squares[i][initialRank+(i-initialFile)] != null ) {
@@ -407,6 +408,7 @@ public class Board {
 				}
 			}
 		} else {
+			
 			if ( initialRank - finalRank < 0 ) {
 				// case 3/4: NW direction
 				for ( int i = initialFile-1 ; i > finalFile ; i-- ) {
@@ -435,9 +437,6 @@ public class Board {
 		}
 		
 	}
-	
-	/**
-	
 
 	/**
 	 * Applies movement logic for a queen
@@ -511,7 +510,6 @@ public class Board {
 		} else if ( Math.abs(finalRank-initialRank) == 0 ) {
 			
 			// horizontal movement for queen
-			System.out.println("Horizontal Movement");
 			
 			if ( initialFile < finalFile ) {
 				
@@ -543,9 +541,7 @@ public class Board {
 			
 		} else if ( Math.abs(finalFile-initialFile) == 0 ) {
 			
-			// vertical movement for queen
-			System.out.println("Vertical Movmeent ");
-								
+			// vertical movement for queen							
 			if ( initialRank < finalRank ) {
 				
 				for ( int i = initialRank+1 ; i < finalRank ; i++ ) {
@@ -589,14 +585,15 @@ public class Board {
 	 */
 	private void moveKing ( int initialFile , int initialRank , int finalFile , int finalRank ) {
 		
-		if ( Math.abs(finalRank-initialRank) > 1 || Math.abs(finalFile-initialFile) > 1 ) {
-			
-			System.out.println("A king doesn't move like that!");
-			
-		} else if ( initialRank == finalRank && ( initialFile == finalFile+2 || initialFile == finalFile-2 )) {
+		
+		if ( initialRank == finalRank && ( initialFile == finalFile+2 || initialFile == finalFile-2 )) {
 			//castling
 			System.out.println("You're trying to castle....");
 			completeCastling( initialFile , initialRank , finalFile , finalRank );
+			
+		} else if ( Math.abs(finalRank-initialRank) > 1 || Math.abs(finalFile-initialFile) > 1 ) {
+			
+			System.out.println("A king doesn't move like that!");
 			
 		} else {
 			
@@ -639,6 +636,9 @@ public class Board {
 			
 			}
 			
+			castlingRightsUpdate( initialFile , initialRank , finalFile , finalRank );
+					
+			
 			isWhitesTurn = !isWhitesTurn;
 			moveNumber += 1;
 			if ( isCheck( isWhitesTurn ) ) {
@@ -650,7 +650,6 @@ public class Board {
 				
 	}
 
-	
 	/**
 	 * 
 	 * Will complete a en passent capture
@@ -710,46 +709,61 @@ public class Board {
 	
 	private void completeCastling( int initialFile , int initialRank , int finalFile , int finalRank ) {
 		
-		
 		flag = true;
 		
-		// let's validate if castling oppertunities remain
-		if ( isWhitesTurn && hasWhiteKingMoved ) {
+		// let's validate if castling opportunities remain
+		
+		if ( isWhitesTurn && initialFile - finalFile == 2 && !hasWhiteKingMoved ) {
 			
-			
-			if ( initialRank - finalRank == 2 && !hasLeftWhiteRookMoved ) {
-				
+			if ( !squares[0][0].getType().equals("Rook") 
+					|| hasLeftWhiteRookMoved 
+					|| squares[1][0] != null 
+					|| squares[2][0] != null
+					|| squares[3][0] != null ) {
 				flag = false;
-				
-			} else if ( initialRank - finalRank == -2 && !hasRightWhiteRookMoved ) {
-				
-				flag = false;
-				
 			}
 			
+		} else if ( isWhitesTurn && finalFile - initialFile == 2 && !hasWhiteKingMoved ) { 
 			
-		} else if ( hasBlackKingMoved ) {
+			if ( !squares[7][0].getType().equals("Rook") 
+					|| hasRightWhiteRookMoved 
+					|| squares[6][0] != null 
+					|| squares[5][0] != null ) {
+				flag = false;
+			}
 			
-			if ( initialRank - finalRank == 2 && !hasLeftBlackRookMoved ) {
-				
+		} else if ( !isWhitesTurn && initialFile - finalFile == 2 && !hasBlackKingMoved ) { 
+			
+			if ( !squares[0][7].getType().equals("Rook") 
+					|| hasLeftBlackRookMoved 
+					|| squares[1][7] != null 
+					|| squares[2][7] != null
+					|| squares[3][7] != null ) {
 				flag = false;
-				
-			} else if ( initialRank - finalRank == -2 && !hasRightBlackRookMoved ) {
-				
+			}
+			
+		} else if ( !isWhitesTurn && finalFile - initialFile == 2 && !hasBlackKingMoved ) { 
+			
+			if ( !squares[7][7].getType().equals("Rook") 
+					|| hasRightBlackRookMoved 
+					|| squares[6][7] != null 
+					|| squares[5][7] != null) {
 				flag = false;
-				
 			}
 			
 		}
 		
 		// now that we confirmed, let's check for checks
-		if (!flag) {
+		if (flag) {
+			
+			flag = false;
 
 			// let's see if it causes a check for the player (e.g. illegal move?)
 			// ... for where the king is right now
 			if ( isCheck(isWhitesTurn) ){
 				
 				System.out.println("Cannot castle while in check!");
+				
 				
 			} else {
 				
@@ -760,21 +774,198 @@ public class Board {
 					for ( int j = 0 ; j < 7 ; j++ ) {
 						
 						squaresAtPreviousTurn[i][j] = squares[i][j];
+						
 					}
+					
 				}
 				
+				// then we check to see if the king would be moving through a check
 				
-				
-				
-				
-				
+				if ( finalFile - initialFile < 0 ) { // E.G. left side castling
+					
+					squares[initialFile-1][initialRank] = squares[initialFile][initialRank];
+					squares[initialFile][initialRank] = null;
+					
+					if ( isCheck( isWhitesTurn ) ) {
+						
+						System.out.println("Cannot castle through a check!");
+						for ( int i = 0 ; i < 7 ;  i++ ) {
+							
+							for ( int j = 0 ; j < 7 ; j++ ) {
+								
+								squares[i][j] = squaresAtPreviousTurn[i][j];
+								
+							}
+							
+						}
+						
+					} else {
+						
+						squares[initialFile-2][initialRank] = squares[initialFile-1][initialRank];
+						squares[initialFile-1][initialRank] = null;
+						
+						if ( isCheck( isWhitesTurn ) ) {
+							
+							System.out.println("Cannot castle, would be a check!");
+							
+							for ( int i = 0 ; i < 7 ;  i++ ) {
+								
+								for ( int j = 0 ; j < 7 ; j++ ) {
+									
+									squares[i][j] = squaresAtPreviousTurn[i][j];
+									
+								}
+								
+							}
+						
+						} else {
+							
+							// perform the castling
+							squares[3][initialRank] = squares[0][initialRank];
+							squares[0][initialRank] = null;
+							
+							if ( isWhitesTurn ) {
+								hasLeftWhiteRookMoved = true;
+								hasRightWhiteRookMoved = true;
+								hasWhiteKingMoved = true;
+							} else {
+								hasLeftBlackRookMoved = true;
+								hasRightBlackRookMoved = true;
+								hasBlackKingMoved = true;
+							}
+							
+							isWhitesTurn = !isWhitesTurn;
+							moveNumber += 1;
+							if ( isCheck( isWhitesTurn ) ) {
+								System.out.println( "   Check!   ");
+							}
+							
+						}
+						
+					} 	
+					
+				} else { //E.G. right side castling
+					
+					squares[initialFile+1][initialRank] = squares[initialFile][initialRank];
+					squares[initialFile][initialRank] = null;
+					
+					if ( isCheck( isWhitesTurn ) ) {
+						
+						System.out.println("Cannot castle through a check!");
+						for ( int i = 0 ; i < 7 ;  i++ ) {
+							
+							for ( int j = 0 ; j < 7 ; j++ ) {
+								
+								squares[i][j] = squaresAtPreviousTurn[i][j];
+								
+							}
+							
+						}
+						
+					} else {
+						
+						squares[initialFile+2][initialRank] = squares[initialFile+1][initialRank];
+						squares[initialFile+1][initialRank] = null;
+						
+						if ( isCheck( isWhitesTurn ) ) {
+							
+							System.out.println("Cannot castle, would be a check!");
+							
+							for ( int i = 0 ; i < 7 ;  i++ ) {
+								
+								for ( int j = 0 ; j < 7 ; j++ ) {
+									
+									squares[i][j] = squaresAtPreviousTurn[i][j];
+									
+								}
+								
+							}
+						
+						} else {
+							
+							// perform the castling
+							squares[5][initialRank] = squares[7][initialRank];
+							squares[7][initialRank] = null;
+							
+							if ( isWhitesTurn ) {
+								hasLeftWhiteRookMoved = true;
+								hasRightWhiteRookMoved = true;
+								hasWhiteKingMoved = true;
+							} else {
+								hasLeftBlackRookMoved = true;
+								hasRightBlackRookMoved = true;
+								hasBlackKingMoved = true;
+							}
+							
+							
+							isWhitesTurn = !isWhitesTurn;
+							moveNumber += 1;
+							if ( isCheck( isWhitesTurn ) ) {
+								System.out.println( "   Check!   ");
+							}
+							
+						}
+						
+					} 
+					
+				}
+					
 			}		
 			
 		}
 		
 	}
 
-
+	private void castlingRightsUpdate (int initialFile, int initialRank, int finalFile, int finalRank) {
+		
+		if ( squares[finalFile][finalRank].getType().equals("Rook") 
+				&& squares[finalFile][finalRank].getColor() 
+				&& initialFile == 0 && initialRank == 0 ) {
+			
+			hasLeftWhiteRookMoved = true;
+			
+		}
+		
+		if ( squares[finalFile][finalRank].getType().equals("Rook") 
+				&& squares[finalFile][finalRank].getColor() 
+				&& initialFile == 7 && initialRank == 0 ) {
+			
+			hasRightWhiteRookMoved = true;
+			
+		}
+		
+		if ( squares[finalFile][finalRank].getType().equals("Rook") 
+				&& !squares[finalFile][finalRank].getColor() 
+				&& initialFile == 0 && initialRank == 0 ) {
+			
+			hasLeftBlackRookMoved = true;
+			
+		}
+		
+		if ( squares[finalFile][finalRank].getType().equals("Rook") 
+				&& !squares[finalFile][finalRank].getColor() 
+				&& initialFile == 7 && initialRank == 0 ) {
+			
+			hasRightBlackRookMoved = true;
+			
+		}
+		
+		if ( squares[finalFile][finalRank].getType().equals("King") 
+				&& squares[finalFile][finalRank].getColor() ) {
+			
+			hasWhiteKingMoved = true;
+			
+		}
+		
+		if ( squares[finalFile][finalRank].getType().equals("King") 
+				&& !squares[finalFile][finalRank].getColor() ) {
+			
+			hasBlackKingMoved = true;
+			
+		}
+		
+	}
+	
 	private boolean isPawnPromotion (int initialFile, int initialRank, int finalFile, int finalRank) {
 		
 		return (finalRank == 0 || finalRank == 7 );
@@ -789,7 +980,6 @@ public class Board {
 		
 	}
 	
-
 	/**
 	 * 
 	 * Checks if the given player (white or black) is in check
@@ -1123,7 +1313,6 @@ public class Board {
 	
 	private boolean isCheckByPawn ( boolean isWhite ) {
 		
-		
 		if ( isWhite ) {
 			
 			if ( kingLocation[1]+1 <= 7 ) {
@@ -1149,8 +1338,7 @@ public class Board {
 				}
 				
 			}
-			
-			
+				
 		} else {
 			
 			if ( kingLocation[1]-1 >= 0 ) {
@@ -1178,8 +1366,6 @@ public class Board {
 			}
 			
 		}
-		
-		
 		
 		return false;
 		
