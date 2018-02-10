@@ -14,7 +14,8 @@ public class Board {
 	private Piece[][] squaresAtPreviousTurn = new Piece [8][8];
 	private boolean isWhitesTurn;
 	private boolean flag;
-	private int moveNumber;
+	public int moveNumber;
+
 	private int[] kingLocation = new int[2];
 	
 	// attributes for castling rights
@@ -25,6 +26,8 @@ public class Board {
 	private boolean hasWhiteKingMoved;
 	private boolean hasBlackKingMoved;
 
+	// attributes for pawn promotion
+//	private String promotionType;
 	
 	
 	public Board()
@@ -627,12 +630,20 @@ public class Board {
 			squares[ finalFile ][ finalRank] = finalPieceHolder;
 			squares[ initialFile ][ initialRank ] = initialPieceHolder;
 			
-		} else {
-			//System.out.println("Moving!");
+		} else {	
+			
+			if ( isPawnPromotion( initialFile , initialRank , finalFile , finalRank ) ){
+				
+				System.out.println("Pawn promotion! Default: a new queen");
+				pawnPromotion( initialFile , initialRank , finalFile , finalRank );
+			
+			}
+			
 			isWhitesTurn = !isWhitesTurn;
 			moveNumber += 1;
-			if ( isCheck( isWhitesTurn )) {
+			if ( isCheck( isWhitesTurn ) ) {
 				System.out.println( "   Check!   ");
+				
 			}
 			
 		}
@@ -764,6 +775,20 @@ public class Board {
 	}
 
 
+	private boolean isPawnPromotion (int initialFile, int initialRank, int finalFile, int finalRank) {
+		
+		return (finalRank == 0 || finalRank == 7 );
+		
+	}
+	
+	private void pawnPromotion (int initialFile, int initialRank, int finalFile, int finalRank) {
+		
+//		System.out.println("Too dee too dee! Pawn Promotion! Enter Q for a queen, K for a knight, "
+//				+ "B for a bishop, or R for a rook: ");
+		squares[finalFile][finalRank] = new Queen(isWhitesTurn); // default for now... 
+		
+	}
+	
 
 	/**
 	 * 
@@ -1383,4 +1408,9 @@ public class Board {
 		this.isWhitesTurn = isWhitesTurn;
 	}
 	
+	public int getMoveNumber() {
+		return moveNumber;
+	}
+	
 }
+
