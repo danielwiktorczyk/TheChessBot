@@ -101,61 +101,69 @@ public class Board {
 			//System.out.println("It is not " +(squares[initialFile][initialRank].getColor()?"white":"black")+ "'s turn! Cannot move opponent's piece.");
 		} else if ( initialFile == finalFile && initialRank == finalRank ) {
 			//System.out.println("Error: the piece would not be moving! (Same location)");
-		} else if ( squares[finalFile][finalRank] == null // e.g. trying to move
-				|| squares[ initialFile][initialRank].getColor() != squares[ finalFile][finalRank].getColor()) { // e.g. trying to attack
-	
+		} else if (squares[finalFile][finalRank] == null) {
+			moveTypeSort ( initialFile , initialRank , finalFile , finalRank );
+		} else if (squares[finalFile][finalRank] != null) {
+			if (isWhitesTurn) {
+				if (!squares[finalFile][finalRank].getColor()) {
+					moveTypeSort ( initialFile , initialRank , finalFile , finalRank );
+				}
+			} else {
+				if (squares[finalFile][finalRank].getColor()) {
+					moveTypeSort ( initialFile , initialRank , finalFile , finalRank );
+				}
+			}
 
-			/**
-			 * Pawn Movement
-			 */
-			if ( squares[ initialFile][initialRank].getType().equals("Pawn") ) {
-				
-				movePawn ( initialFile , initialRank , finalFile , finalRank );
-				
-			}
-				
-			/**
-			 * Rook Movement
-			 */
-			else if ( squares[initialFile][initialRank].getType().equals("Rook") ) {	
-				moveRook ( initialFile , initialRank , finalFile , finalRank );	
-			}
-			
-			/**
-			 * Knight Movement
-			 */
-			else if ( squares[ initialFile][initialRank].getType().equals("Knight") ) {
-				moveKnight ( initialFile , initialRank , finalFile , finalRank );
-			}
-			
-			/**
-			 * Bishop Movement
-			 */
-			else if ( squares[ initialFile][initialRank].getType().equals("Bishop") ) {
-				moveBishop ( initialFile , initialRank , finalFile , finalRank );		
-			}
-			
-			/**
-			 * Queen Movement
-			 */
-			else if ( squares[ initialFile][initialRank].getType().equals("Queen") ) {
-				moveQueen ( initialFile , initialRank , finalFile , finalRank );				
-			}
-			
-			/**
-			 * King Movement
-			 */
-			else if ( squares[ initialFile][initialRank].getType().equals("King") ) {
-				moveKing ( initialFile , initialRank , finalFile , finalRank );			
-			}
-			
-		} else if ( squares[ initialFile][initialRank].getColor() == squares[ finalFile][finalRank].getColor() ) {
-			//System.out.println("Error: Cannot attack one's own piece!");	
-		} else {		
-			//System.out.println("Weird error: not a movement....");
-		}		
-		// need to research universal movement commands, then translate them into this method's input
+		} 	
+		
 	}
+	
+	private void moveTypeSort ( int initialFile , int initialRank , int finalFile , int finalRank ) {
+		
+		/**
+		 * Pawn Movement
+		 */
+		if ( squares[ initialFile][initialRank].getType().equals("Pawn") ) {
+			movePawn ( initialFile , initialRank , finalFile , finalRank );	
+		}
+			
+		/**
+		 * Rook Movement
+		 */
+		else if ( squares[initialFile][initialRank].getType().equals("Rook") ) {	
+			moveRook ( initialFile , initialRank , finalFile , finalRank );	
+		}
+		
+		/**
+		 * Knight Movement
+		 */
+		else if ( squares[ initialFile][initialRank].getType().equals("Knight") ) {
+			moveKnight ( initialFile , initialRank , finalFile , finalRank );
+		}
+		
+		/**
+		 * Bishop Movement
+		 */
+		else if ( squares[ initialFile][initialRank].getType().equals("Bishop") ) {
+			moveBishop ( initialFile , initialRank , finalFile , finalRank );		
+		}
+		
+		/**
+		 * Queen Movement
+		 */
+		else if ( squares[ initialFile][initialRank].getType().equals("Queen") ) {
+			moveQueen ( initialFile , initialRank , finalFile , finalRank );				
+		}
+		
+		/**
+		 * King Movement
+		 */
+		else if ( squares[ initialFile][initialRank].getType().equals("King") ) {
+			moveKing ( initialFile , initialRank , finalFile , finalRank );	
+		}
+		
+	}
+	
 	
 	/**
 	 * Applies movement logic for a pawn
@@ -590,19 +598,16 @@ public class Board {
 	private void moveKing ( int initialFile , int initialRank , int finalFile , int finalRank ) {
 		
 		
-		if ( initialRank == finalRank && ( initialFile == finalFile+2 || initialFile == finalFile-2 )) {
+		if ( initialRank == finalRank 
+				&& ( initialFile == finalFile+2 || initialFile == finalFile-2 ) 
+				&& (initialRank == 0 || initialRank == 7 ) ) {
 			//castling
 			//System.out.println("You're trying to castle....");
-			completeCastling( initialFile , initialRank , finalFile , finalRank );
-			
-		} else if ( Math.abs(finalRank-initialRank) > 1 || Math.abs(finalFile-initialFile) > 1 ) {
-			
-			//System.out.println("A king doesn't move like that!");
-			
-		} else {
-			
+			completeCastling( initialFile , initialRank , finalFile , finalRank );	
+		} else if ( Math.abs(finalRank-initialRank) < 2 && Math.abs(finalFile-initialFile) < 2 ) {
 			completeMovement ( initialFile , initialRank , finalFile , finalRank );
-			
+		} else {
+			//System.out.println("A king doesn't move like that!");
 		}
 		
 	}
@@ -716,6 +721,12 @@ public class Board {
 		flag = true;
 		
 		// let's validate if castling opportunities remain
+		
+		if ( isWhitesTurn && hasWhiteKingMoved ) {
+			flag = false;
+		} else if ( !isWhitesTurn && hasBlackKingMoved ) {
+			flag = false;
+		}
 		
 		if ( isWhitesTurn && initialFile - finalFile == 2 && !hasWhiteKingMoved) {
 			
@@ -992,14 +1003,9 @@ public class Board {
 	 * @return depending on which side is desired to be checked for check, will respond with 
 	 * either true of false.
 	 */
-	private boolean isCheck ( boolean isWhite ) {
-		
-		
+	public boolean isCheck ( boolean isWhite ) {
 		
 		// let's locate the isWhite king
-		
-		
-		
 		if ( isWhite ) {
 			
 			for ( int i = 0 ; i < 8 ; i++ ) {
@@ -1037,8 +1043,6 @@ public class Board {
 			}
 			
 		}
-		
-		
 		
 		// now let's check for any attacking knights....
 		if ( isCheckByKnight( isWhite ) )
@@ -1431,7 +1435,9 @@ public class Board {
 				
 			}
 			
-		} else if ( kingLocation[0]+1 <= 7 ) { //check 3 squares on right
+		} 
+		
+		if ( kingLocation[0]+1 <= 7 ) { //check 3 squares on right
 			
 			// check above, below, and immediate right
 			if ( kingLocation[1]+1 <= 7 
@@ -1456,24 +1462,24 @@ public class Board {
 				
 			}
 			
-		} else { // check 2 squares above and below
+		} 
+		
+		// check 2 squares above and below
 			
-			// check above, below
-			if ( kingLocation[1]+1 <= 7 
-					&& squares[ kingLocation[0] ][ kingLocation[1]+1 ] != null 
-					&& squares[ kingLocation[0] ][ kingLocation[1]+1 ].getType().equals("King")) {
-				
-				////System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
-				return true;
-				
-			} else if ( kingLocation[1]-1 >= 0 
-					&& squares[ kingLocation[0] ][ kingLocation[1]-1 ] != null 
-					&& squares[ kingLocation[0] ][ kingLocation[1]-1 ].getType().equals("King")) {
-				
-				////System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
-				return true;
-				
-			}
+		// check above, below
+		if ( kingLocation[1]+1 <= 7 
+				&& squares[ kingLocation[0] ][ kingLocation[1]+1 ] != null 
+				&& squares[ kingLocation[0] ][ kingLocation[1]+1 ].getType().equals("King")) {
+			
+			////System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+			return true;
+			
+		} else if ( kingLocation[1]-1 >= 0 
+				&& squares[ kingLocation[0] ][ kingLocation[1]-1 ] != null 
+				&& squares[ kingLocation[0] ][ kingLocation[1]-1 ].getType().equals("King")) {
+			
+			////System.out.println("Kings are getting too talkitive (Can't be next to eachother)!");
+			return true;
 			
 		}
 			
@@ -1582,7 +1588,6 @@ public class Board {
 				+"+-A--B--C--D--E--F--G--H-+  "+ (isCheck(isWhitesTurn)?"   Check!":"   ") );
 		System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-		
 	}
 
 	/**
@@ -1616,7 +1621,7 @@ public class Board {
 
 
 
-	public boolean isWhitesTurn() {
+	public boolean getIsWhitesTurn() {
 		return isWhitesTurn;
 	}
 
@@ -1628,6 +1633,11 @@ public class Board {
 	
 	public int getMoveNumber() {
 		return moveNumber;
+	}
+
+
+	public void setMoveNumber(int moveNumber) {
+		this.moveNumber = moveNumber;
 	}
 	
 }
