@@ -1,5 +1,7 @@
 package theChessBot;
 
+// I UPDATED THIS ON NOT THE MASTER
+
 public class Bishop extends Piece{
 
 	public Bishop ( boolean isWhite) {
